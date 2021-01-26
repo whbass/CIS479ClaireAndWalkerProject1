@@ -5,7 +5,7 @@
 using namespace std;
 
 
-//More efficient heuristic function than the ifs. Y is up and down, x is side to side. Use negs & abs values after getting value to determine amount due to wind
+//Gets Windy Manhattan Distance of a 3x3 2d puzzle array. Y is up and down, x is side to side. Use negs & abs values after getting value to determine amount due to wind
 int heuristicFunction(int p[][3])
 {
 	int num, x, y, total = 0;
@@ -77,7 +77,7 @@ int heuristicFunction(int p[][3])
 	return total;
 }
 
-//Get location of the 0(or -). Find it's coordinates based on x/y. Based on it's x/y, if statement to get the correct values that can move to it's spot.
+//Get location of the 0(or -). Find it's coordinates based on x/y. Based on it's x/y, "if" statement to get the correct values that can move to it's spot.
 //With new puzzle from moved tile, send to heuristic function to get h distance. Use that value in priority queue. Put nums as negative so you can use
 //the "top" function to get the lowest value which is what we want.
 void priorityQueue(int p[][3])
