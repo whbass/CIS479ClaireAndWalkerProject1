@@ -82,7 +82,7 @@ int heuristicFunction(int p[][3])
 //the "top" function to get the lowest value which is what we want.
 void priorityQueue(int p[][3])
 {
-	int num, x, y, val1, val2, val3, val4;
+	int num, x, y, val1 = 2147483647, val2 = 2147483647, val3 = 2147483647, val4 = 2147483647;
 	int pTemp[3][3];
 	
 	for (int i = 0; i < 3; i++)
@@ -103,60 +103,66 @@ void priorityQueue(int p[][3])
 		}
 	}
 	
-	if(x == 0 && y == 0)
+	if((x+1) < 3)
 	{
-		pTemp[0][0] = pTemp[1][0];
-		pTemp[1][0] = 0;
+		pTemp[x][y] = pTemp[x+1][y];
+		pTemp[x+1][y] = 0;
 		
 		val1 = heuristicFunction(pTemp);
 		
-		pTemp[1][0] = pTemp[0][0];
-		pTemp[0][0] = 0;
-		
-		pTemp[0][0] = pTemp[0][1];
-		pTemp[0][1] = 0;
-		
-		val2 = heuristicFunction(pTemp);
-		
-		priority_queue <int> q;
-	    q.push(-val1);
-	    q.push(-val2);
-	
-		int prio = q.top();
-		prio *= -1;
-	    cout << val1 << endl;
-	    cout << val2 << endl;
+		pTemp[x+1][y] = pTemp[x][y];
+		pTemp[x][y] = 0;
 	}
 	
-	if(x == 2 && y == 2)
+	if((y+1) < 3)
 	{
-		pTemp[2][2] = pTemp[1][2];
-		pTemp[1][2] = 0;
-		
-		val1 = heuristicFunction(pTemp);
-		
-		pTemp[1][2] = pTemp[2][2];
-		pTemp[2][2] = 0;
-		
-		pTemp[2][2] = pTemp[2][1];
-		pTemp[2][1] = 0;
+		pTemp[x][y] = pTemp[x][y+1];
+		pTemp[x][y+1] = 0;
 		
 		val2 = heuristicFunction(pTemp);
 		
-		priority_queue <int> q;
-	    q.push(-val1);
-	    q.push(-val2);
-	
-		int prio = q.top();
-		prio *= -1;
-	    cout << val1 << endl;
-	    cout << val2 << endl;
+		pTemp[x][y+1] = pTemp[x][y];
+		pTemp[x][y] = 0;
 	}
+	
+	
+	if(((x+1) < 3) && ((y-1) >= 0))
+	{
+		pTemp[x][y] = pTemp[x+1][y+1];
+		pTemp[x+1][y+1] = 0;
+		
+		val3 = heuristicFunction(pTemp);
+	
+		pTemp[x+1][y+1] = pTemp[x][y];
+		pTemp[x][y] = 0;
+	}
+	
+	if((x-1) >= 0)
+	{
+		pTemp[x][y] = pTemp[x-1][y];
+		pTemp[x-1][y] = 0;
+		
+		val4 = heuristicFunction(pTemp);
+	}
+	
+	priority_queue <int> q;
+    q.push(-val1);
+    q.push(-val2);
+    q.push(-val3);
+    q.push(-val4);
+
+	int prio = q.top();
+	prio *= -1;
+    cout << val1 << endl;
+    cout << val2 << endl;
+    cout << val3 << endl;
+    cout << val4 << endl;	
 }
 
 int main()
 {
-	int puzzle[3][3] = {{2, 8, 3}, {6, 7, 4}, {1, 5, 0}};
+	//int puzzle[3][3] = {{2, 8, 3}, {6, 7, 4}, {1, 5, 0}};
+	int puzzle[3][3] = {{0, 8, 6}, {2, 7, 4}, {1, 5, 3}};
 
 	priorityQueue(puzzle);
 
