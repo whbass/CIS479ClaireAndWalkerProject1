@@ -82,106 +82,112 @@ int heuristicFunction(int p[][3])
 //the "top" function to get the lowest value which is what we want.
 void priorityQueue(int p[][3])
 {
-	int num, x, y, val1 = 2147483647, val2 = 2147483647, val3 = 2147483647, val4 = 2147483647;
+	int num, x, y, val1 = 2147483647, val2 = 2147483647, val3 = 2147483647, val4 = 2147483647, h = 2147483647;
+	int numMoves = 0;
+	priority_queue <int> q;
 	
-	for(int i = 0; i < 3; i++)
-	{
-		for(int j = 0; j < 3; j++)
+	//while(h != 0)
+	//{
+		for(int i = 0; i < 3; i++)
 		{
-			num = p[i][j];
-			if(num == 0)
+			for(int j = 0; j < 3; j++)
 			{
-				y = i;
-				x = j;
-				break;
+				num = p[i][j];
+				if(num == 0)
+				{
+					y = i;
+					x = j;
+					break;
+				}
 			}
 		}
-	}
-	
-	if((x+1) < 3)
-	{
-		p[x][y] = p[x+1][y];
-		p[x+1][y] = 0;
 		
-		val1 = heuristicFunction(p);
+		if((x+1) < 3)
+		{
+			p[x][y] = p[x+1][y];
+			p[x+1][y] = 0;
+			
+			val1 = heuristicFunction(p);
+			
+			p[x+1][y] = p[x][y];
+			p[x][y] = 0;
+		}
 		
-		p[x+1][y] = p[x][y];
-		p[x][y] = 0;
-	}
-	
-	if((y+1) < 3)
-	{
-		p[x][y] = p[x][y+1];
-		p[x][y+1] = 0;
+		if((y+1) < 3)
+		{
+			p[x][y] = p[x][y+1];
+			p[x][y+1] = 0;
+			
+			val2 = heuristicFunction(p);
+			
+			p[x][y+1] = p[x][y];
+			p[x][y] = 0;
+		}
 		
-		val2 = heuristicFunction(p);
+		if((y-1) >= 0)
+		{
+			p[x][y] = p[x][y-1];
+			p[x][y-1] = 0;
+			
+			val3 = heuristicFunction(p);
 		
-		p[x][y+1] = p[x][y];
-		p[x][y] = 0;
-	}
-	
-	
-	if((y-1) >= 0)
-	{
-		p[x][y] = p[x][y-1];
-		p[x][y-1] = 0;
+			p[x][y-1] = p[x][y];
+			p[x][y] = 0;
+		}
 		
-		val3 = heuristicFunction(p);
-	
-		p[x][y-1] = p[x][y];
-		p[x][y] = 0;
-	}
-	
-	if((x-1) >= 0)
-	{
-		p[x][y] = p[x-1][y];
-		p[x-1][y] = 0;
+		if((x-1) >= 0)
+		{
+			p[x][y] = p[x-1][y];
+			p[x-1][y] = 0;
+			
+			val4 = heuristicFunction(p);
+			
+			p[x-1][y] = p[x][y];
+			p[x][y] = 0;
+		}
 		
-		val4 = heuristicFunction(p);
+	    q.push(-val1);
+	    q.push(-val2);
+	    q.push(-val3);
+	    q.push(-val4);
+	
+		int prio = q.top();
+		prio *= -1;
+		q = priority_queue <int>(); 
 		
-		p[x-1][y] = p[x][y];
-		p[x][y] = 0;
-	}
-	
-	priority_queue <int> q;
-    q.push(-val1);
-    q.push(-val2);
-    q.push(-val3);
-    q.push(-val4);
-
-	int prio = q.top();
-	prio *= -1;
-	
-	if(prio == val1)
-	{
-		p[x][y] = p[x+1][y];
-		p[x+1][y] = 0;
-	}
-	else if(prio == val2)
-	{
-		p[x][y] = p[x][y+1];
-		p[x][y+1] = 0;
-	}
-	else if(prio == val3)
-	{
-		p[x][y] = p[x][y-1];
-		p[x][y-1] = 0;
-	}
-	else if(prio == val4)
-	{
-		p[x][y] = p[x-1][y];
-		p[x-1][y] = 0;
-	}
-	
-	for (int i = 0; i < 3; i++)
-	    	for (int j = 0; j < 3; j++)
-	        	cout << p[i][j];
+		if(prio == val1)
+		{
+			p[x][y] = p[x+1][y];
+			p[x+1][y] = 0;
+		}
+		else if(prio == val2)
+		{
+			p[x][y] = p[x][y+1];
+			p[x][y+1] = 0;
+		}
+		else if(prio == val3)
+		{
+			p[x][y] = p[x][y-1];
+			p[x][y-1] = 0;
+		}
+		else if(prio == val4)
+		{
+			p[x][y] = p[x-1][y];
+			p[x-1][y] = 0;
+		}
+		
+		h = heuristicFunction(p);
+		
+		for (int i = 0; i < 3; i++)
+		    	for (int j = 0; j < 3; j++)
+		        	cout << p[i][j];
+	//}
 }
 
 int main()
 {
 	int puzzle[3][3] = {{2, 8, 3}, {6, 7, 4}, {1, 5, 0}};
-	//int puzzle[3][3] = {{0, 8, 6}, {2, 7, 4}, {1, 5, 3}};
+	//int puzzle[3][3] = {{2, 8, 3}, {6, 7, 4}, {1, 0, 5}};
 
 	priorityQueue(puzzle);
 
