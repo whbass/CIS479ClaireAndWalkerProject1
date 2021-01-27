@@ -83,11 +83,6 @@ int heuristicFunction(int p[][3])
 void priorityQueue(int p[][3])
 {
 	int num, x, y, val1 = 2147483647, val2 = 2147483647, val3 = 2147483647, val4 = 2147483647;
-	int pTemp[3][3];
-	
-	for (int i = 0; i < 3; i++)
-    	for (int j = 0; j < 3; j++)
-        	pTemp[i][j] = p[i][j];
 	
 	for(int i = 0; i < 3; i++)
 	{
@@ -105,44 +100,47 @@ void priorityQueue(int p[][3])
 	
 	if((x+1) < 3)
 	{
-		pTemp[x][y] = pTemp[x+1][y];
-		pTemp[x+1][y] = 0;
+		p[x][y] = p[x+1][y];
+		p[x+1][y] = 0;
 		
-		val1 = heuristicFunction(pTemp);
+		val1 = heuristicFunction(p);
 		
-		pTemp[x+1][y] = pTemp[x][y];
-		pTemp[x][y] = 0;
+		p[x+1][y] = p[x][y];
+		p[x][y] = 0;
 	}
 	
 	if((y+1) < 3)
 	{
-		pTemp[x][y] = pTemp[x][y+1];
-		pTemp[x][y+1] = 0;
+		p[x][y] = p[x][y+1];
+		p[x][y+1] = 0;
 		
-		val2 = heuristicFunction(pTemp);
+		val2 = heuristicFunction(p);
 		
-		pTemp[x][y+1] = pTemp[x][y];
-		pTemp[x][y] = 0;
+		p[x][y+1] = p[x][y];
+		p[x][y] = 0;
 	}
 	
 	
-	if(((x+1) < 3) && ((y-1) >= 0))
+	if((y-1) >= 0)
 	{
-		pTemp[x][y] = pTemp[x+1][y+1];
-		pTemp[x+1][y+1] = 0;
+		p[x][y] = p[x][y-1];
+		p[x][y-1] = 0;
 		
-		val3 = heuristicFunction(pTemp);
+		val3 = heuristicFunction(p);
 	
-		pTemp[x+1][y+1] = pTemp[x][y];
-		pTemp[x][y] = 0;
+		p[x][y-1] = p[x][y];
+		p[x][y] = 0;
 	}
 	
 	if((x-1) >= 0)
 	{
-		pTemp[x][y] = pTemp[x-1][y];
-		pTemp[x-1][y] = 0;
+		p[x][y] = p[x-1][y];
+		p[x-1][y] = 0;
 		
-		val4 = heuristicFunction(pTemp);
+		val4 = heuristicFunction(p);
+		
+		p[x-1][y] = p[x][y];
+		p[x][y] = 0;
 	}
 	
 	priority_queue <int> q;
@@ -153,16 +151,37 @@ void priorityQueue(int p[][3])
 
 	int prio = q.top();
 	prio *= -1;
-    cout << val1 << endl;
-    cout << val2 << endl;
-    cout << val3 << endl;
-    cout << val4 << endl;	
+	
+	if(prio == val1)
+	{
+		p[x][y] = p[x+1][y];
+		p[x+1][y] = 0;
+	}
+	else if(prio == val2)
+	{
+		p[x][y] = p[x][y+1];
+		p[x][y+1] = 0;
+	}
+	else if(prio == val3)
+	{
+		p[x][y] = p[x][y-1];
+		p[x][y-1] = 0;
+	}
+	else if(prio == val4)
+	{
+		p[x][y] = p[x-1][y];
+		p[x-1][y] = 0;
+	}
+	
+	for (int i = 0; i < 3; i++)
+	    	for (int j = 0; j < 3; j++)
+	        	cout << p[i][j];
 }
 
 int main()
 {
-	//int puzzle[3][3] = {{2, 8, 3}, {6, 7, 4}, {1, 5, 0}};
-	int puzzle[3][3] = {{0, 8, 6}, {2, 7, 4}, {1, 5, 3}};
+	int puzzle[3][3] = {{2, 8, 3}, {6, 7, 4}, {1, 5, 0}};
+	//int puzzle[3][3] = {{0, 8, 6}, {2, 7, 4}, {1, 5, 3}};
 
 	priorityQueue(puzzle);
 
