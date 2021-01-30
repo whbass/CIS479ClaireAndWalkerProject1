@@ -77,17 +77,21 @@ int heuristicFunction(int p[][3])
 	return total;
 }
 
-//Get location of the 0(or -). Find it's coordinates based on x/y. Based on it's x/y, "if" statement to get the correct values that can move to it's spot.
-//With new puzzle from moved tile, send to heuristic function to get h distance. Use that value in priority queue. Put nums as negative so you can use
-//the "top" function to get the lowest value which is what we want.
+//Get location of the 0(or -). Find it's coordinates based on y/x. Based on it's y/x, "if" statement to get the correct values that can move to it's spot.
+//With new puzzle from moved tile, send to heuristic function to get h distance. Add h distance to path cost(1,2,3 based on wind). Put nums as negative so you can use
+//the "top" function which grabs the largest value, to get the lowest value which is what we want. Do this until h is 0, ie puzzle solved.
 void priorityQueue(int p[][3])
 {
-	int num, x, y, val1 = 2147483647, val2 = 2147483647, val3 = 2147483647, val4 = 2147483647, h = 2147483647;
-	int numMoves = 0;
+	int num, x, y, pathCost, val1 = 2147483000, val2 = 2147483000, val3 = 2147483000, val4 = 2147483000, h = 2147483000;
 	priority_queue <int> q;
 	
-	//while(h != 0)
-	//{
+	while(h != 0)
+	{
+		val1 = 2147483000;
+		val2 = 2147483000; 
+		val3 = 2147483000; 
+		val4 = 2147483000;
+		h = 2147483000;
 		for(int i = 0; i < 3; i++)
 		{
 			for(int j = 0; j < 3; j++)
@@ -102,48 +106,56 @@ void priorityQueue(int p[][3])
 			}
 		}
 		
-		if((x+1) < 3)
-		{
-			p[x][y] = p[x+1][y];
-			p[x+1][y] = 0;
-			
-			val1 = heuristicFunction(p);
-			
-			p[x+1][y] = p[x][y];
-			p[x][y] = 0;
-		}
-		
 		if((y+1) < 3)
 		{
-			p[x][y] = p[x][y+1];
-			p[x][y+1] = 0;
+			p[y][x] = p[y+1][x];
+			p[y+1][x] = 0;
 			
-			val2 = heuristicFunction(p);
+			h = heuristicFunction(p);
+			pathCost += 3;
+			val1 = h + pathCost;
 			
-			p[x][y+1] = p[x][y];
-			p[x][y] = 0;
+			p[y+1][x] = p[y][x];
+			p[y][x] = 0;
 		}
 		
-		if((y-1) >= 0)
+		if((x+1) < 3)
 		{
-			p[x][y] = p[x][y-1];
-			p[x][y-1] = 0;
+			p[y][x] = p[y][x+1];
+			p[y][x+1] = 0;
 			
-			val3 = heuristicFunction(p);
-		
-			p[x][y-1] = p[x][y];
-			p[x][y] = 0;
+			h = heuristicFunction(p);
+			pathCost += 2;
+			val2 = h + pathCost;
+			
+			p[y][x+1] = p[y][x];
+			p[y][x] = 0;
 		}
 		
 		if((x-1) >= 0)
 		{
-			p[x][y] = p[x-1][y];
-			p[x-1][y] = 0;
+			p[y][x] = p[y][x-1];
+			p[y][x-1] = 0;
 			
-			val4 = heuristicFunction(p);
+			h = heuristicFunction(p);
+			pathCost += 2;
+			val3 = h + pathCost;
+		
+			p[y][x-1] = p[y][x];
+			p[y][x] = 0;
+		}
+		
+		if((y-1) >= 0)
+		{
+			p[y][x] = p[y-1][x];
+			p[y-1][x] = 0;
 			
-			p[x-1][y] = p[x][y];
-			p[x][y] = 0;
+			h = heuristicFunction(p);
+			pathCost +=1;
+			val4 = h + pathCost;
+			
+			p[y-1][x] = p[y][x];
+			p[y][x] = 0;
 		}
 		
 	    q.push(-val1);
@@ -157,37 +169,36 @@ void priorityQueue(int p[][3])
 		
 		if(prio == val1)
 		{
-			p[x][y] = p[x+1][y];
-			p[x+1][y] = 0;
+			p[y][x] = p[y+1][x];
+			p[y+1][x] = 0;
 		}
 		else if(prio == val2)
 		{
-			p[x][y] = p[x][y+1];
-			p[x][y+1] = 0;
+			p[y][x] = p[y][x+1];
+			p[y][x+1] = 0;
 		}
 		else if(prio == val3)
 		{
-			p[x][y] = p[x][y-1];
-			p[x][y-1] = 0;
+			p[y][x] = p[y][x-1];
+			p[y][x-1] = 0;
 		}
 		else if(prio == val4)
 		{
-			p[x][y] = p[x-1][y];
-			p[x-1][y] = 0;
+			p[y][x] = p[y-1][x];
+			p[y-1][x] = 0;
 		}
-		
-		h = heuristicFunction(p);
 		
 		for (int i = 0; i < 3; i++)
 		    	for (int j = 0; j < 3; j++)
 		        	cout << p[i][j];
-	//}
+		cout << endl;
+	}
 }
 
 int main()
 {
 	int puzzle[3][3] = {{2, 8, 3}, {6, 7, 4}, {1, 5, 0}};
-	//int puzzle[3][3] = {{2, 8, 3}, {6, 7, 4}, {1, 0, 5}};
+	//int puzzle[3][3] = {{2, 8, 3}, {6, 0, 4}, {1, 7, 5}};
 
 	priorityQueue(puzzle);
 
