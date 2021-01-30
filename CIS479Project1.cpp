@@ -82,8 +82,16 @@ int heuristicFunction(int p[][3])
 //the "top" function which grabs the largest value, to get the lowest value which is what we want. Do this until h is 0, ie puzzle solved.
 void priorityQueue(int p[][3])
 {
-	int num, x, y, pTemp, pathCost, val1 = 2147483000, val2 = 2147483000, val3 = 2147483000, val4 = 2147483000, hTemp, h = 2147483000;
+	int num, x, y, pTemp, pathCost = 0, val1 = 2147483000, val2 = 2147483000, val3 = 2147483000, val4 = 2147483000, hTemp, h = 2147483000;
 	priority_queue <int> q;
+	
+	for (int i = 0; i < 3; i++)
+		for (int j = 0; j < 3; j++)
+		    cout << p[i][j];
+	cout << endl;
+	h = heuristicFunction(p);
+	cout << pathCost << endl;
+	cout << h << endl;
 	
 	while(h != 0)
 	{
@@ -201,6 +209,7 @@ void priorityQueue(int p[][3])
 		        	cout << p[i][j];
 		cout << endl;
 		cout << pathCost << endl;
+		cout << h << endl;
 	}
 	
 	//cout << pathCost;
