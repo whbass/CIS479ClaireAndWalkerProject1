@@ -82,7 +82,7 @@ int heuristicFunction(int p[][3])
 //the "top" function which grabs the largest value, to get the lowest value which is what we want. Do this until h is 0, ie puzzle solved.
 void priorityQueue(int p[][3])
 {
-	int num, x, y, pathCost, val1 = 2147483000, val2 = 2147483000, val3 = 2147483000, val4 = 2147483000, h = 2147483000;
+	int num, x, y, pTemp, pathCost, val1 = 2147483000, val2 = 2147483000, val3 = 2147483000, val4 = 2147483000, hTemp, h = 2147483000;
 	priority_queue <int> q;
 	
 	while(h != 0)
@@ -92,6 +92,8 @@ void priorityQueue(int p[][3])
 		val3 = 2147483000; 
 		val4 = 2147483000;
 		h = 2147483000;
+		pTemp = pathCost;
+		
 		for(int i = 0; i < 3; i++)
 		{
 			for(int j = 0; j < 3; j++)
@@ -112,8 +114,8 @@ void priorityQueue(int p[][3])
 			p[y+1][x] = 0;
 			
 			h = heuristicFunction(p);
-			pathCost += 3;
-			val1 = h + pathCost;
+			pTemp += 3;
+			val1 = h + pTemp;
 			
 			p[y+1][x] = p[y][x];
 			p[y][x] = 0;
@@ -125,8 +127,8 @@ void priorityQueue(int p[][3])
 			p[y][x+1] = 0;
 			
 			h = heuristicFunction(p);
-			pathCost += 2;
-			val2 = h + pathCost;
+			pTemp += 2;
+			val2 = h + pTemp;
 			
 			p[y][x+1] = p[y][x];
 			p[y][x] = 0;
@@ -138,8 +140,8 @@ void priorityQueue(int p[][3])
 			p[y][x-1] = 0;
 			
 			h = heuristicFunction(p);
-			pathCost += 2;
-			val3 = h + pathCost;
+			pTemp += 2;
+			val3 = h + pTemp;
 		
 			p[y][x-1] = p[y][x];
 			p[y][x] = 0;
@@ -151,8 +153,8 @@ void priorityQueue(int p[][3])
 			p[y-1][x] = 0;
 			
 			h = heuristicFunction(p);
-			pathCost +=1;
-			val4 = h + pathCost;
+			pTemp +=1;
+			val4 = h + pTemp;
 			
 			p[y-1][x] = p[y][x];
 			p[y][x] = 0;
@@ -171,28 +173,37 @@ void priorityQueue(int p[][3])
 		{
 			p[y][x] = p[y+1][x];
 			p[y+1][x] = 0;
+			pathCost += 1;
 		}
 		else if(prio == val2)
 		{
 			p[y][x] = p[y][x+1];
 			p[y][x+1] = 0;
+			pathCost += 2;
 		}
 		else if(prio == val3)
 		{
 			p[y][x] = p[y][x-1];
 			p[y][x-1] = 0;
+			pathCost += 2;
 		}
 		else if(prio == val4)
 		{
 			p[y][x] = p[y-1][x];
 			p[y-1][x] = 0;
+			pathCost += 3;
 		}
+		
+		h = heuristicFunction(p);
 		
 		for (int i = 0; i < 3; i++)
 		    	for (int j = 0; j < 3; j++)
 		        	cout << p[i][j];
 		cout << endl;
+		cout << pathCost << endl;
 	}
+	
+	//cout << pathCost;
 }
 
 int main()
