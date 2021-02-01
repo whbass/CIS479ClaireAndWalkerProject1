@@ -1,13 +1,11 @@
 //Claire Hofmann & Walker Bass CIS-479 Project 1
 #include <iostream>
+#include <unordered_map>
 #include <cmath>
 #include <queue>
 using namespace std;
 
 void printPuzzle(vector<vector<int>>, int, int);
-
-int currentLevel = 0;
-int expansionOrder = 1;
 
 struct Node
 {
@@ -22,7 +20,11 @@ struct Node
 	}
 };
 
-priority_queue <Node> q;
+priority_queue <Node> frontier;
+unordered_map<string, bool> explored;
+
+int currentLevel = 0;
+int expansionOrder = 1;
 
 //Gets Windy Manhattan Distance of a 3x3 2d puzzle array. Y is up and down, x is side to side. Use negs & abs values after getting value to determine amount due to wind
 //int heuristicFunction(int p[][3])
@@ -108,6 +110,7 @@ void priorityQueue(Node startingNode)
 	int num, x, y, pTemp, pathCost, fn1 = 2147483000, fn2 = 2147483000, fn3 = 2147483000, fn4 = 2147483000, hTemp, h = 2147483000;
 	vector<vector<int>> p1, p2, p3, p4;
 	Node n1,n2,n3,n4;
+	string puzzleString;
 
 	h = heuristicFunction(currentNode.puzzle);
 	
@@ -202,18 +205,45 @@ void priorityQueue(Node startingNode)
 
 			pTemp = pathCost;
 		}
-				
+
+		//converts puzzle to a single string for use of key in hash table
+		puzzleString = "";
+		for(int i = 0; i < 3; i++)
+			for(int j = 0; j < 3; j++)
+				puzzleString.push_back(currentNode.puzzle[i][j] + '0');
+
+		//inserts into hash table
+		explored.insert({puzzleString, true});
+		
+		//places new puzzles in frontier
 		n1 = {p1, -fn1, currentNode.level+1, currentNode.currentPathCost+1};
 		n2 = {p2, -fn2, currentNode.level+1, currentNode.currentPathCost+2};
 		n3 = {p3, -fn3, currentNode.level+1, currentNode.currentPathCost+2};
 		n4 = {p4, -fn4, currentNode.level+1, currentNode.currentPathCost+3};
-		q.pop();
-		q.push(n1);
-		q.push(n2);
-		q.push(n3);
-		q.push(n4);
+		frontier.pop();
+		frontier.push(n1);
+		frontier.push(n2);
+		frontier.push(n3);
+		frontier.push(n4);
 		
-		currentNode = q.top();
+		currentNode = frontier.top();
+
+		puzzleString = "";
+		for(int i = 0; i < 3; i++)
+			for(int j = 0; j < 3; j++)
+				puzzleString.push_back(currentNode.puzzle[i][j] + '0');
+
+		//if puzzle found in explored, pop off priority queue and move to next puzzle
+		while(explored.find(puzzleString) != explored.end())
+		{
+			frontier.pop();
+			currentNode = frontier.top();
+			puzzleString = "";
+			for(int i = 0; i < 3; i++)
+				for(int j = 0; j < 3; j++)
+					puzzleString.push_back(currentNode.puzzle[i][j] + '0');
+		}
+		
 		h = heuristicFunction(p);
 		
 		printPuzzle(p, pathCost, h);
@@ -244,7 +274,7 @@ int main()
 	vector<vector<int>> startingPuzzle {{2, 8, 3}, {6, 7, 4}, {1, 5, 0}};
 	Node startingNode = {startingPuzzle, 0, 0, 0};
 
-	q.push(startingNode);
+	frontier.push(startingNode);
 
 	priorityQueue(startingNode);
 
